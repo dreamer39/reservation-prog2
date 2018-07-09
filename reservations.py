@@ -1,6 +1,20 @@
 import csv
 from datetime import datetime , timedelta
+from twilio.rest import Client
 number=0
+
+def send_text_message(message, number):
+	
+	account_sid = os.environ["twillio_sid"]
+	auth_token  = os.environ["twillio_token"]
+	client = Client(account_sid, auth_token)
+	message = client.messages.create(
+		body= "Your Reservation Is Confirmed",
+		to=number, 
+		from_=os.environ["twillio_from"])
+
+	print 'confirmation message sent..'
+
 def check_a_room(hotel_name):
 	f1 = open('hotel list.csv', "rb")
 	reading=list(csv.reader(f1,delimiter=','))
@@ -82,6 +96,9 @@ def add_new_reservation(hotel_name,customer_full_name,check_in_date,days_to_stay
 	print ' '*20,'.'*50
 	print ' '*25, 'thank u....reservation is confirmed...'
 	print ' '*20,'.'*50
+
+	send_text_message(message, phone_number)
+
 	add_customer(customer_full_name,phone_number)
 
 def reservation_related(hotel_name,customer_full_name,check_in_date,days_to_stay,phone_number):
